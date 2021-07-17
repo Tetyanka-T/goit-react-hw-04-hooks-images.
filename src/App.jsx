@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import toast, { Toaster } from 'react-hot-toast';
 import { Spinner } from 'components/Loader/Loader';
@@ -8,21 +8,21 @@ import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
 
-export default class App extends Component {
-  state = {
-    searchImage: null,
-    images: [],
-    page: 1,
-    reqStatus: 'idle',
-    showModal: false,
-    largeImage: {},
-  };
+function App() {
+  const [searchImage, setSearchImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [reqStatus, setReqStatus] = useState('idle');
+  const [showModal, setShowModal] = useState(false);
+  const [largeImage, setLargeImage] = useState({});
 
-  async componentDidUpdate(_, prevState) {
-    const { searchImage, page } = this.state;
-    if (prevState.searchImage !== searchImage || prevState.page !== page) {
+  useEffect(() => {
+    if (!searchImage) {
+      return;
+    }
+    async function onFetchImage() {
       try {
-        this.setState({ reqStatus: 'pending' });
+        setReqStatus('pending');
 
         const images = await fetchImage(searchImage, page);
 
@@ -30,69 +30,61 @@ export default class App extends Component {
           throw new Error();
         }
 
-        this.setState(prevState => ({
-          images: [...prevState.images, ...images],
-          reqStatus: 'resolved',
-        }));
+        setImages(prevState => [...prevState, ...images]);
+        setReqStatus('resolved');
       } catch (err) {
-        this.setState({ reqStatus: 'rejected' });
+        setReqStatus('rejected');
         toast.error('Not found');
       }
     }
+    onFetchImage();
 
     page > 1 &&
       window.scrollTo({
         top: document.documentElement.scrollHeight,
         behavior: 'smooth',
       });
-  }
+  }, [page, searchImage]);
 
-  onLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+  const onLoadMore = () => {
+    setPage(prevState => prevState + 1);
   };
 
-  handleSearchChange = searchImage => {
-    this.reset();
-    this.setState({ searchImage });
+  const handleSearchChange = searchImage => {
+    reset();
+    setSearchImage(searchImage);
   };
 
-  reset = () => {
-    this.setState({
-      searchImage: null,
-      images: [],
-      page: 1,
-      reqStatus: 'idle',
-    });
+  const reset = () => {
+    setSearchImage(null);
+    setImages([]);
+    setPage(1);
+    setReqStatus('idle');
   };
 
-  toggleModal = () => {
-    this.setState(prevState => ({
-      showModal: !prevState.showModal,
-    }));
+  const toggleModal = () => {
+    setShowModal(state => !state);
   };
 
-  handleOpenImage = largeImage => {
-    this.setState({ largeImage });
-    this.toggleModal();
+  const handleOpenImage = largeImage => {
+    setLargeImage(largeImage);
+    toggleModal();
   };
 
-  render() {
-    const { images, reqStatus, showModal, largeImage } = this.state;
-    return (
-      <div>
-        <SearchBar onSearch={this.handleSearchChange} />
-        {reqStatus === 'pending' && <Spinner size="50" color="blue" />}
-        <ImageGallery images={images} openLargeImage={this.handleOpenImage} />
-        <Toaster />
-        {images.length > 0 && <Button onClick={this.onLoadMore} />}
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img src={largeImage.largeImageURL} alt={largeImage.tags} />
-          </Modal>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div>
+      <SearchBar onSearch={handleSearchChange} />
+      {reqStatus === 'pending' && <Spinner size="50" color="blue" />}
+      <ImageGallery images={images} openLargeImage={handleOpenImage} />
+      <Toaster />
+      {images.length > 0 && <Button onClick={onLoadMore} />}
+      {showModal && (
+        <Modal onClose={toggleModal}>
+          <img src={largeImage.largeImageURL} alt={largeImage.tags} />
+        </Modal>
+      )}
+    </div>
+  );
 }
+
+export default App;
