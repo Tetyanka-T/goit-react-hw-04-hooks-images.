@@ -1,8 +1,8 @@
 {
-  "name": "goit-react-hw-03-image-finder",
+  "name": "image-finder",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://tetyanka-T.github.io/goit-react-hw-04-hooks-images",
+  "homepage": "https://tetyanka-T.github.io/search-images",
   "dependencies": {
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",

@@ -1,1 +1,1 @@
-# goit-react-hw-04-hooks-images.
+App for search images.
