@@ -1,3 +1,4 @@
+import { ReactComponent as Search } from '../../images/search.svg';
 import s from 'components/Searchbar/Searchbar.module.css';
 
 function Searchbar({ onSearch }) {
@@ -10,7 +11,7 @@ function Searchbar({ onSearch }) {
     <header className={s.Searchbar}>
       <form onSubmit={handleSearch} className={s.SearchForm}>
         <button type="submit" className={s.SearchForm_button}>
-          <span className={s.SearchForm_button_label}>Search</span>
+          <Search />
         </button>
 
         <input
