@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Spinner } from 'components/Loader/Loader';
 import SearchBar from 'components/Searchbar/Searchbar';
 import { fetchImage } from 'services/api';
+import Background from 'components/Background/Background';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
@@ -74,6 +75,8 @@ function App() {
   return (
     <div>
       <SearchBar onSearch={handleSearchChange} />
+      {/* <Background /> */}
+
       {reqStatus === 'pending' && <Spinner size="50" color="blue" />}
       <ImageGallery images={images} openLargeImage={handleOpenImage} />
       <Toaster />
